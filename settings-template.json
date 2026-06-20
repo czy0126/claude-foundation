@@ -122,7 +122,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "BRANCH=\"$(git branch --show-current 2>/dev/null || echo N/A)\"; if command -v jq >/dev/null 2>&1; then jq -n --arg branch \"$BRANCH\" '{hookSpecificOutput: {hookEventName: \"PostCompact\", additionalContext: (\"压缩完成。当前分支: \" + $branch + \"。关键约束：两次修复失败→停止重新分析。已知陷阱在项目 CLAUDE.md 第五节。\")}}'; else python -c \"import json;print(json.dumps({'hookSpecificOutput':{'hookEventName':'PostCompact','additionalContext':f'压缩完成。当前分支: $BRANCH。关键约束：两次修复失败→停止重新分析。已知陷阱在项目 CLAUDE.md 第五节。'}}))\"; fi",
+            "command": "BRANCH=\"$(git branch --show-current 2>/dev/null || echo N/A)\"; if command -v jq >/dev/null 2>&1; then jq -n --arg branch \"$BRANCH\" '{continue: true, systemMessage: (\"压缩完成。当前分支: \" + $branch + \"。关键约束：两次修复失败→停止重新分析。已知陷阱在项目 CLAUDE.md 第五节。\")}'; else python -c \"import json;print(json.dumps({'continue':True,'systemMessage':f'压缩完成。当前分支: $BRANCH。关键约束：两次修复失败→停止重新分析。已知陷阱在项目 CLAUDE.md 第五节。'}))\"; fi",
             "timeout": 5
           }
         ]

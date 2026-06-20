@@ -1,82 +1,87 @@
-# .claude-foundation — Claude Code 工作根基
+# .claude-foundation — Claude Code Work Environment Toolkit
 
-> 一个文件夹，三层结构。适用于任何项目的可复用 Claude Code 工作环境。
+> A folder, three layers. Reusable Claude Code work environment for any project.
 > **v0.5.0**
 
-## 开始
+**Read this in other languages:** [简体中文](README.zh-CN.md)
+
+## Getting Started
 
 ```bash
-# 一键安装
+# One-click install
 bash .claude-foundation/install.sh --with-hooks --with-rules --with-settings
 
-# 或最小安装：1 个文件，立即生效
+# Or minimal install: 1 file, instant effect
 cp .claude-foundation/GLOBAL-CLAUDE.md ~/.claude/CLAUDE.md
 ```
 
-其他组件按需选用。
+Other components are optional — pick what you need.
 
 ---
 
-## 三层结构
+## Three-Layer Architecture
 
-### 根基层 🔴 — CLAUDE.md（77 行，每会话自动加载）
+### Foundation Layer 🔴 — CLAUDE.md (77 lines, auto-loaded every session)
 
-LLM 缺陷防御（7 项量化事实 + 硬规则）+ 需求澄清卡 + Plan→Do→Verify→Record 循环 + 跨模型审阅 + 提示词质量辅助（自动触发 + 6 个简略触发词）
+LLM weakness defense (7 quantified facts + hard rules) + Requirements clarification card + Plan→Do→Verify→Record cycle + Cross-model review + Prompt quality assistant (auto-trigger + 6 shorthand triggers)
 
-### 工具层 🟡 — 4 个命令（按需加载）
+### Tool Layer 🟡 — 4 Commands (loaded on demand)
 
-| 命令 | 功能 |
-|------|------|
-| `/clarify` | 诊断 → 建议卡 → 追问(按需) → 重写 → 判断权 |
-| `/preflight` | 环境检查 + 资源注册表生成 |
-| `/audit` | 变更后完整性审计 |
-| `/crosscheck` | 生成跨模型审阅提示 |
+| Command | Function |
+|---------|----------|
+| `/clarify` | Diagnose → Suggestion card → Follow-up (as needed) → Rewrite → User decides |
+| `/preflight` | Environment check + Resource registry generation |
+| `/audit` | Post-change integrity audit |
+| `/crosscheck` | Generate cross-model review prompt |
 
-### 防护层 🟡 — 权限 + 钩子 + 规则
+### Guard Layer 🟡 — Permissions + Hooks + Rules
 
-| 组件 | 内容 |
-|------|------|
-| `settings-template.json` | 静态 deny 规则 + PreToolUse/SessionStart/PostToolUse 钩子配置 + statusLine |
-| `hooks/`（3 个） | block-destructive.sh / protect-sensitive.sh / inject-git-context.sh |
-| `rules/`（4 个） | python-style / js-style / security / test-first（路径范围规则） |
+| Component | Contents |
+|-----------|----------|
+| `settings-template.json` | Static deny rules + PreToolUse/SessionStart/PostToolUse hook config + statusLine |
+| `hooks/` (3 files) | block-destructive.sh / protect-sensitive.sh / inject-git-context.sh |
+| `rules/` (4 files) | python-style / js-style / security / test-first (path-scoped rules) |
 
-双层安全：静态许可兜底（deny 规则始终生效），动态钩子捕获变体（输出结构化拒绝理由）。
+Dual-layer security: static permissions as baseline (deny rules always active), dynamic hooks catch variants (output structured deny reasons).
 
 ---
 
-## 文件夹结构
+## Directory Structure
 
 ```
 .claude-foundation/
-├── CHANGELOG.md                   # 版本变更记录
-├── GLOBAL-CLAUDE.md              # ⭐ 全局元规则 (77行)
-├── project-template.md           # 项目 CLAUDE.md 模板
-├── settings-template.json        # 权限 + 钩子 + 状态行
-├── scan-environment.py           # 环境扫描脚本
-├── install.sh                    # 安装脚本
-├── prompt-craft.md               # 提示词工艺手册（参考）
-├── verification-patterns.md      # 7 种验证模式（参考）
-├── context-discipline.md         # 上下文管理（参考）
-├── resource-registry-template.md # 资源注册表模板（参考）
-├── memory-templates/             # 会话交接 + 已知陷阱模板
-├── hooks/                        # 3 个 bash 钩子
-├── rules/                        # 4 个路径范围规则
-└── commands/                     # 4 个命令
+├── README.md                      # ⭐ Project homepage (English)
+├── README.zh-CN.md                # ⭐ Project homepage (Simplified Chinese)
+├── CHANGELOG.md                   # Version history (English)
+├── CHANGELOG.zh-CN.md             # Version history (Simplified Chinese)
+├── GLOBAL-CLAUDE.md               # ⭐ Global meta-rules (77 lines)
+├── project-template.md            # Project-level CLAUDE.md template
+├── settings-template.json         # Permissions + hooks + status line
+├── scan-environment.py            # Environment scanner script
+├── install.sh                     # Install script
+├── prompt-craft.md                # Prompt crafting handbook (reference)
+├── verification-patterns.md       # 7 verification patterns (reference)
+├── context-discipline.md          # Context management guide (reference)
+├── resource-registry-template.md  # Resource registry template (reference)
+├── memory-templates/              # Session handoff + known trap templates
+├── hooks/                         # 3 bash hooks
+├── rules/                         # 4 path-scoped rules
+└── commands/                      # 4 slash commands
 ```
 
 ---
 
-## 完整安装
+## Full Installation
 
 ```bash
-# 全局（必须）
+# Global (required)
 cp .claude-foundation/GLOBAL-CLAUDE.md ~/.claude/CLAUDE.md
 
-# 项目（按需）
+# Project-level (as needed)
 cp .claude-foundation/project-template.md ./CLAUDE.md
-python .claude-foundation/scan-environment.py --markdown  # 自动填充资源表
+python .claude-foundation/scan-environment.py --markdown  # auto-fill resource registry
 
-# 可选组件
+# Optional components
 cp .claude-foundation/settings-template.json .claude/settings.json
 cp -r .claude-foundation/hooks .claude/
 cp -r .claude-foundation/commands .claude/
@@ -85,15 +90,15 @@ cp -r .claude-foundation/rules .claude/
 
 ---
 
-## 维护
+## Maintenance
 
-- 每次有意义的变更后 → 更新 CLAUDE.md
-- 每次发现新陷阱 → 添加到已知陷阱表，标注日期
-- `/clear` 重置上下文；`/compact` 压缩会话
+- After every meaningful change → update CLAUDE.md
+- Every new trap discovered → add to known traps table with date
+- `/clear` to reset context; `/compact` to compress session
 
 ---
 
-## 卸载
+## Uninstall
 
 ```bash
 rm ~/.claude/CLAUDE.md
@@ -105,4 +110,4 @@ rm -r .claude/rules/
 
 ---
 
-> **原则**：保持 CLAUDE.md 活着（持续更新），不是死模板。根据项目调整，不是教条。
+> **Principle**: Keep CLAUDE.md alive (continuously updated), not a dead template. Adapt to the project, not dogma.
