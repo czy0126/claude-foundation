@@ -1,15 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-
   "model": "",
   "alwaysThinkingEnabled": false,
   "effortLevel": "high",
   "outputStyle": "Explanatory",
   "autoCompactEnabled": true,
-
   "permissions": {
     "defaultMode": "acceptEdits",
-
     "allow": [
       "Bash(npm run *)",
       "Bash(npm test *)",
@@ -37,7 +34,6 @@
       "WebFetch(domain:*.pypi.org)",
       "WebFetch(domain:*.npmjs.com)"
     ],
-
     "deny": [
       "Bash(curl *)",
       "Bash(wget *)",
@@ -65,7 +61,6 @@
       "Edit(./**/credentials)",
       "Edit(./**/private.key)"
     ],
-
     "ask": [
       "Bash(git push *)",
       "Bash(docker *)",
@@ -73,7 +68,6 @@
       "Bash(terraform *)"
     ]
   },
-
   "hooks": {
     "SessionStart": [
       {
@@ -87,7 +81,6 @@
         ]
       }
     ],
-
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -110,7 +103,6 @@
         ]
       }
     ],
-
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
@@ -124,7 +116,6 @@
         ]
       }
     ],
-
     "PostCompact": [
       {
         "matcher": "",
@@ -136,29 +127,14 @@
           }
         ]
       }
-    ],
-
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "在真正结束前，请确认以下仪式已完成：(1) 如果有新发现的陷阱或操作事实，已写入项目 CLAUDE.md；(2) 如果有值得跨会话保留的状态，已写入 .claude/memory/；(3) 所有测试通过。如果仪式未完成，返回 {\"decision\":\"block\",\"reason\":\"仪式未完成：具体缺失项\"}。如果完成，返回 {\"decision\":\"approve\"}。",
-            "timeout": 30
-          }
-        ]
-      }
     ]
   },
-
   "statusLine": {
     "type": "command",
     "command": "command -v jq >/dev/null 2>&1 && jq -r '[.model.display_name, \" | \", (.context_window.used_percentage|tostring) + \"%\", \" | $\", (.cost.total_cost_usd // 0 | tostring), \" | \", .workspace.current_dir] | join(\"\")' || python -c \"import json,sys;d=json.load(sys.stdin);m=d.get('model',{});c=d.get('context_window',{});x=d.get('cost',{});w=d.get('workspace',{});print(m.get('display_name','?')+' | '+str(int(c.get('used_percentage',0)))+'% | $'+str(round(x.get('total_cost_usd',0),2))+' | '+w.get('current_dir','?'))\" 2>/dev/null || echo '...'",
     "padding": 2,
     "refreshInterval": 5
   },
-
   "env": {
     "DISABLE_AUTOUPDATER": "1"
   }

@@ -11,3 +11,14 @@ Thumbs.db
 # Backup files
 *.bak
 *.backup
+
+# Sensitive files (should never be in repo)
+settings.json
+settings.local.json
+.env
+.env.*
+secrets/
+*.pem
+*-key.json
+credentials
+private.key
