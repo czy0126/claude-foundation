@@ -3,9 +3,28 @@
 > A folder, three layers. Reusable Claude Code work environment for any project.
 > **v0.5.0**
 
+[![Version](https://img.shields.io/badge/version-v0.5.0-blue)](CHANGELOG.md)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 **Read this in other languages:** [简体中文](README.zh-CN.md)
 
-## Getting Started
+---
+
+## Why?
+
+Claude Code is powerful out of the box — but also **dangerously unguarded**. Three problems every team hits within the first week:
+
+| # | Problem | Real impact |
+|---|---------|-------------|
+| 1 | **No safety net** | `rm -rf` goes through. `.env` gets read. One hallucinated command = real damage. |
+| 2 | **LLMs fool themselves** | 35-50% of wrong code is delivered with high confidence. Without systematic defense, you ship bugs you didn't know you wrote. |
+| 3 | **Reinventing setup** | Every project writes the same CLAUDE.md from scratch. Same hooks. Same rules. Same mistakes. |
+
+**.claude-foundation** gives you a battle-tested baseline in one command. Not a framework — a **foundation**. You own it, you modify it, it adapts to your project.
+
+---
+
+## Quick Start
 
 ```bash
 # One-click install
@@ -15,7 +34,18 @@ bash .claude-foundation/install.sh --with-hooks --with-rules --with-settings
 cp .claude-foundation/GLOBAL-CLAUDE.md ~/.claude/CLAUDE.md
 ```
 
-Other components are optional — pick what you need.
+---
+
+## Before / After
+
+| Scenario | Bare Claude Code | With .claude-foundation |
+|----------|-----------------|------------------------|
+| LLM tries `rm -rf /tmp/*` | ⚠️ Executes immediately | 🛡️ Blocked — hook denies with reason |
+| LLM tries to read `.env` | ⚠️ Succeeds silently | 🛡️ Blocked — path component match |
+| User says "optimize it" | ⚠️ Edits vaguely, may break things | 🧠 /clarify diagnoses → suggests → rewrites |
+| Project has no CLAUDE.md | ⚠️ No rules, no guardrails | ✅ /preflight scans env → generates resource registry |
+| New teammate joins | ⚠️ "Read the channel history" | ✅ One install.sh, same baseline across machines |
+| After a long session | ⚠️ Context diluted, rules forgotten | 🔄 PostCompact hook re-injects key constraints |
 
 ---
 
@@ -42,7 +72,35 @@ LLM weakness defense (7 quantified facts + hard rules) + Requirements clarificat
 | `hooks/` (3 files) | block-destructive.sh / protect-sensitive.sh / inject-git-context.sh |
 | `rules/` (4 files) | python-style / js-style / security / test-first (path-scoped rules) |
 
-Dual-layer security: static permissions as baseline (deny rules always active), dynamic hooks catch variants (output structured deny reasons).
+**Why two layers of security?** Static permissions (deny rules in settings.json) are the baseline — always active, zero latency. Dynamic hooks catch what static rules miss: variant commands, substring tricks, context-dependent patterns. Defense in depth.
+
+---
+
+## Design Philosophy
+
+| Principle | What it means |
+|-----------|---------------|
+| **Ownership, not dependency** | Copy the files into your repo. No package manager, no update channel, no black box. You read the code, you change it, you own it. |
+| **Layers, not monolith** | Foundation (always on), Tools (on demand), Guards (defense). Each layer works independently — use what you need, ignore the rest. |
+| **Rules, not advice** | Every CLAUDE.md rule is backed by a quantified fact. "API hallucination: 34.7% of niche-library calls are fabricated" → "grep before assuming an API exists." No hand-waving. |
+| **Bash + Python, nothing else** | Hooks use bash (jq preferred, python fallback). No Node.js, no Docker, no external services. Runs wherever Claude Code runs. |
+
+---
+
+## Bare Claude Code vs .claude-foundation
+
+| Capability | Bare Claude Code | .claude-foundation |
+|------------|-----------------|-------------------|
+| Destructive command blocking | ❌ | ✅ `block-destructive.sh` |
+| Sensitive file protection | ❌ | ✅ `protect-sensitive.sh` |
+| Git context on startup | ❌ | ✅ `inject-git-context.sh` |
+| Systematic LLM weakness defense | ❌ | ✅ 7 quantified rules in CLAUDE.md |
+| Vague prompt handling | ❌ | ✅ `/clarify` auto-trigger |
+| Cross-model review scaffold | ❌ | ✅ `/crosscheck` |
+| Environment scanner | ❌ | ✅ `scan-environment.py` |
+| Post-compact constraint re-injection | ❌ | ✅ PostCompact hook |
+| One-command install | ❌ | ✅ `install.sh` |
+| Windows-compatible | ⚠️ Partial | ✅ Tested on Windows 11 + Git Bash |
 
 ---
 
@@ -87,6 +145,22 @@ cp -r .claude-foundation/hooks .claude/
 cp -r .claude-foundation/commands .claude/
 cp -r .claude-foundation/rules .claude/
 ```
+
+---
+
+## FAQ
+
+**Q: Do I need all components?**
+No. The only required piece is `GLOBAL-CLAUDE.md` → `~/.claude/CLAUDE.md`. Everything else — hooks, commands, rules, settings — is optional and independent. Start minimal, add as you need.
+
+**Q: Does this work on Windows?**
+Yes. Tested on Windows 11 with Git Bash. Hooks use `jq` (preferred) with automatic `python` fallback. The only Windows-specific fix is `sys.stdout.reconfigure(encoding='utf-8')` in `scan-environment.py`.
+
+**Q: Can I customize the hooks and rules?**
+That's the point. Copy them into your project's `.claude/` directory and modify freely. The files are short (largest hook is 58 lines), readable bash — no framework magic.
+
+**Q: How do I update after installing?**
+Pull the latest from this repo, re-run `install.sh`. The script only adds files — it won't overwrite your customized hooks or settings unless you use `--force`. Check `CHANGELOG.md` to see what changed.
 
 ---
 
